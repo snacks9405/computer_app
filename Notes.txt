@@ -1,0 +1,2 @@
+widget argument textvariable
+  

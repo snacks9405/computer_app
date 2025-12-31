@@ -1,0 +1,14 @@
+# python temporary files
+__pycache__/
+*.py[cod]
+
+#virtual environments
+venv/
+.venv/
+env/
+
+#secret files
+.env
+
+#vs code
+.vscode/
