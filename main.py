@@ -14,6 +14,7 @@ class MainApp:
         "user_text": "default placeholder",
         "menu_selection": "Select an Option",
         "total_seconds": 0,
+        "lives":0
     }
 
     def __init__(self, root):
@@ -30,8 +31,10 @@ class MainApp:
         self.root.columnconfigure(0, weight=1)
         self.root.rowconfigure(0, weight=1)
 
-        self.mainframe = Frame(self.root, padding=(3, 12, 12, 3))
+        self.mainframe = Frame(self.root, padding=(3, 12, 3, 3))
         self.mainframe.grid(column=0, row=0)
+        self.mainframe.columnconfigure(0, weight = 1)
+        
 
         saved_data = self.load_data()
         self.vars = {}
@@ -46,15 +49,19 @@ class MainApp:
         self.selection = StringVar(value=saved_data.get("menu_selection"))
 
         self.time_label = Label(self.mainframe)
-        self.time_label.grid(column=0, row=0)
+        self.time_label.grid(column=0, row=1)
 
-        Label(self.mainframe, text="Stored Data:").grid(column=0, row=1)
+        Label(self.mainframe, text="Stored Data:").grid(column=0, row=2)
         Label(
             self.mainframe, textvariable=self.vars["user_text"], foreground="blue"
-        ).grid(column=0, row=2)
+        ).grid(column=0, row=3)
+        
+        # Lives Label
+        self.lives_label = Label(self.mainframe, text=f"lives: {self.vars["lives"].get()}")
+        self.lives_label.grid(column=1, row=0, sticky=(N, E))
 
         # Option Menu
-        Label(self.mainframe, text="Where you wanna go?").grid(column=0, row=3)
+        Label(self.mainframe, text="Where you wanna go?").grid(column=0, row=4)
         self.options = ["Update Value", "Show Map", "Feet to Meters"]
         self.options_width = len(max(self.options, key=len)) + 4
 
@@ -62,7 +69,7 @@ class MainApp:
             self.mainframe, self.vars["menu_selection"], self.vars["menu_selection"].get(), *self.options
         )
         om.config(width=self.options_width)
-        om.grid(column=0, row=4, pady=10)
+        om.grid(column=0, row=5, pady=10)
 
         # Button(self.mainframe, text="clear settings", command=lambda: saved_data.set(DEFAULT_SETTINGS)).grid(row=4)
         # Button(root, text="banana", command=lambda: self.selection.set("banana")).pack()
@@ -70,7 +77,7 @@ class MainApp:
 
         Button(
             self.mainframe, text="Open Secondary Window", command=self.open_secondary
-        ).grid(column=0, row=5)
+        ).grid(column=0, row=6)
 
         self.timer()
 
@@ -84,16 +91,18 @@ class MainApp:
         new_seconds = current_seconds + 1
         self.vars["total_seconds"].set(new_seconds)
 
-        REWARD_INTERVAL = 60
-        if new_seconds % REWARD_INTERVAL == 0:
-            self.give_reward(new_seconds)
-            
+
+        NEW_LIFE = 180
+        if new_seconds % NEW_LIFE == 0:
+            self.give_time_life(new_seconds)
         self.time_label.after(1000, self.timer)
 
-    def give_reward(self, total):
+    def give_time_life(self, total):
         minutes = total // 60
-        print(f"Reward triggered at {minutes} minutes!")
-        messagebox.showinfo("Reward!", f"You've been active for {minutes} minutes!")
+        self.vars["lives"].set(self.vars["lives"].get() + 1)
+        self.lives_label.configure(text=f"lives: {self.vars["lives"].get()}")
+        print(f"+1 life triggered at {minutes} minutes!")
+        messagebox.showinfo("Reward!", f"You get +1 life at {minutes} minutes!")
 
     # loads data from filename
     def load_data(self):
@@ -131,7 +140,7 @@ class MainApp:
 
 if __name__ == "__main__":
     root = Tk()
-    root.minsize(400, 300)
-    root.resizable(False, False)
+    #root.minsize(400, 300)
+    #root.resizable(False, False)
     app = MainApp(root)
     root.mainloop()

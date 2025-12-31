@@ -1,2 +1,10 @@
 widget argument textvariable
   
+
+github
+    git add . 
+    git commit -m "Initial commit"
+    
+activate venv
+    pc: .\.venv\Scripts\activate
+    mac: source .venv/bin/activate
